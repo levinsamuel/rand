@@ -6,12 +6,18 @@ use feature qw(say);
 use lib '/home/samuel.levin/lib/';
 use Encode qw(decode encode find_encoding);
 use Switch;
-    
+use Getopt::Std;
+
+getopts("d");
+our($opt_d);
+ 
 my $file = shift;
 
 if (! defined $file) {
     die "No file argument provided";
 }
+
+my $ptn = "[^+-<>.,\[\]]";
 
 sub fromfile {
 
@@ -21,7 +27,7 @@ sub fromfile {
     while (<$in>) {
 
         # Remove non-script characters
-        s/[^+-<>.,\[\]]//g;
+        s/$ptn//g;
         
         push @script, $_;
     }
@@ -31,9 +37,14 @@ sub fromfile {
 sub fromarg {
 
     my @script = [];
+    $_[0] =~ s/$ptn//g;
     $script[0] = $_[0];
     
     return @script;
+}
+
+sub parse {
+
 }
 
 my @lines;
@@ -150,8 +161,38 @@ for (my $i = 0; $i < $slen; $i++) {
     
 }
 
-say '';
-say 'Program finished';
-say "array size: ".scalar @tape;
-say "final position: $pos";
+if (defined $opt_d) {
 
+    say '';
+    say '';
+    say 'Program finished';
+    say "array size: ".scalar @tape;
+    say "final position: $pos";
+    say '';
+    print "Array:\n[".$tape[0];
+    my $f = 1;
+    foreach my $el (@tape) {
+        
+        if ($f) {
+            $f = 0;} else {
+            print ",".$el;
+        }
+    }
+    print "]";
+}
+
+=head1 WHAT IS THIS
+
+brainfuk interpreter written in perl, buddy.
+
+=head1 OPTIONS
+
+=over 4
+
+=item -d
+
+run in debug mode
+
+=back
+
+=cut
