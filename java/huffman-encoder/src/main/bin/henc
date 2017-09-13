@@ -1,0 +1,58 @@
+#!/bin/bash
+
+###############################
+##
+#
+#		:: SHELL SCRIPT TO START AND MANAGE HUFFMAN ENCODER
+#
+##
+###############################
+
+printhelp (){
+	
+	echo
+	echo "HUFFMAN ENCODER"
+	echo
+	echo "Usage:"
+	echo "      1. $(basename $0) [-c] INPUT_FILE [COMPRESSED_FILENAME]"
+	echo "      2. $(basename $0) -d COMPRESSED_FILE OUTPUT_FILENAME"
+	echo
+	echo "The first pattern will compress the INPUT_FILE (a text file)."
+	echo "If no COMPRESSED_FILENAME is given, compression is output to a"
+	echo "file with the same name as INPUT_FILE, with extension changed to"
+	echo "'.hen'."
+	echo
+	echo "The second pattern will decompress COMPRESSED_FILE to OUTPUT_FILENAME."
+	echo "Output name is required."
+	echo
+	echo "The -h option prints this message."
+}
+
+JAR_LOC="/cygdrive/c/Users/samuel.levin/.m2/repository/in/sjl/huffman-encoder/1.0-SNAPSHOT/huffman-encoder-1.0-SNAPSHOT.jar"
+[[ -f $JAR_LOC ]] || (echo "encoder jar does not exist where expected: $JAR_LOC" && exit 1)
+
+if [[ $# -eq 0 ]]; then
+	printhelp
+	exit 0
+fi
+
+comp=1
+
+while getopts 'cdh' opt; do
+	case $opt in
+		c) comp=1
+		;;
+		d) comp=0
+		;;
+		h) printhelp; exit 0
+		;;
+	esac
+done
+
+shift $((OPTIND - 1))
+
+returnVal=`java -jar $JAR_LOC $@`
+
+if [[ $returnVal -eq 2 ]]; then
+	echo "No output file given"
+fi >2

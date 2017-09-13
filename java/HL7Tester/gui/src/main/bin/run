@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Debugging Options
+# JAVA_OPTS="$JAVA_OPTS -Xdebug -Xnoagent -Djava.compiler -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9876"
+
+# Log config file
+JAVA_OPTS="$JAVA_OPTS -Dlog4j.configuration=file:///$(pwd)/${log4j.file.name}"
+
+exec java $JAVA_OPTS -jar ${pom.artifactId}-${pom.version}.jar

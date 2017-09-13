@@ -1,0 +1,18 @@
+Here is a string of text. Tell me the frequencies of this string, please.
+
+Thanks.
+
+2014-06-19: Now this file is longer. I am going to make this file much longer to see
+if this causes any other undesired behavior. It probably will. When trying this
+encoder on a much longer file what happened was that the file keep being written to endlessly
+which probably indicates a serious problem. Definitely. DEEEEEEFFFFFFINITELY.
+
+2014-06-24: Fixed an error caused by the fact that I was storing each encoded bit string as one
+byte, but some ended up being longer than that. I made a fix where, depending on the length of
+the bit string, it would be stored as either one or two bytes, and both writer and reader check
+the length first. The test succeeded with this longer file, but the last two characters were cut off.
+
+2014-06-24, same date but next day really: Error where file was being written to ad infinitum
+is fixed. As expected, it was an issue with the logic around continuing onto a new bitset once
+the the previous one hit the size limit. The iterator of the loop was being reset to 0 inside the
+loop so I changed the loop to use its own iterator.
