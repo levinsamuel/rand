@@ -1,0 +1,173 @@
+#!/bin/bash
+
+while getopts "Vvh" opt; do
+    
+    case $opt in
+        v) v=1
+        ;;
+        V) v=1; V=1
+        ;;
+        h) h=1
+        ;;
+    esac
+done
+
+if [[ -n $h ]]; then
+    
+    echo "Usage:"
+    echo $(basename $0)" [-v] [SVN directory to copy from]"
+    echo
+    echo "Options:"
+    echo "-h: print this message"
+    echo "-v: verbose output"
+    echo "-V: extra verbose output"
+    exit 0
+fi
+
+shift $((OPTIND - 1))
+
+[[ -z $1 ]] && echo "Please provide a copy-from directory argument. Use -h option for help" >&2 && exit 1
+
+IFSBAK=$IFS
+IFS=$'\n'
+##
+## Get SVN version
+##
+for line in $(cat $1/pom.xml); do
+
+    if [[ "$line" == *\<version\>* ]]; then
+        svnver=${line##*<version>}
+        svnver=${svnver%%</version>*}
+        break
+    fi
+done
+
+[[ -z "$svnver" ]] && echo "Could not get SVN Dir." && exit
+echo "SVN version: $svnver"
+
+cachefile="${HOME}/.jarstosdk_${svnver}"
+
+if [[ -f $cachefile ]]; then
+
+    for lin in $(cat $cachefile); do
+        prop=${lin%%:*}
+        val=${lin#*:}
+        case $prop in
+            sdk) sdk=$val;;
+            sdkver) sdkver=$val;;
+            sdkjars) sdkjars=$val;;
+            svnjars) svnjars=$val;;
+        esac
+        
+    done
+    
+    [[ -n $v ]] && echo "Read these values:"
+    [[ -n $v ]] && echo "SDK dir: $sdk"
+    [[ -n $v ]] && echo "SDK version: $sdkver"
+    [[ -n $V ]] && echo "SDK jars: $sdkjars"
+    [[ -n $V ]] && echo "SVN jars: $svnjars"
+fi
+
+if [[ -z $sdk || ! -d $sdk || -z $sdkver || -z $sdkjars || -z $svnjars ]]; then
+    
+    
+    [[ -n $v ]] && echo "Cache dir is missing information, or SDK path has changed. Rediscovering paths."
+    [[ -f $cachefile ]] && rm "$cachefile" && touch "$cachefile"
+    ngbase="/cygdrive/c/nextgate"
+    sdkrel="products/sdk/ngmm"
+
+    for install in $(ls $ngbase); do
+        mmsdkdir="${ngbase}/${install}/${sdkrel}"
+        if [[ -d  $mmsdkdir ]]; then
+
+            [[ -n $v ]] && echo "Checking install dir $mmsdkdir for versions"
+            for sdkvertmp in $(ls $mmsdkdir | sort); do
+                lastsdkver=$sdkvertmp
+            done
+            [[ -n $v ]] && echo "Found last version: $lastsdkver"
+
+            sdkver=${lastsdkver%%_rev*}
+            minrver=${sdkver%.*}
+            [[ -n $v ]] && echo "Parsed version to minor: $minrver"
+
+            if [[ "$minrver" == ${svnver%.*} ]]; then
+                samever="$lastsdkver"
+                [[ -n $v ]] && echo "Found sdk version matching minor: $samever"
+                break
+            fi
+        fi
+    done
+        
+    # sdkbase="/cygdrive/c/nextgate/trunk/products/sdk/ngmm"
+
+    # for ver in $(ls $sdkbase | sort); do
+        # lastver=$ver
+    # done
+
+    [[ -z $samever ]] && echo "could not copy, no SDK version found matching SVN version $svnver" && exit >&2
+
+    sdk="$mmsdkdir/$samever"
+    echo "NGMM SDK dir: $sdk"
+    echo "sdk:${sdk}" >> $cachefile
+    echo "sdkver:${sdkver}" >> $cachefile
+
+    [[ -n $v ]] && echo "Checking for SDK jars with version: $sdkver"
+    sdkjars=
+    for jar in $(find $sdk -name "*$sdkver.jar"); do
+
+        [[ -n $V ]] && echo "Found jar: $jar"
+        sdkjars="$sdkjars $jar"
+    done
+    echo "sdkjars:${sdkjars}" >> $cachefile
+
+    [[ -n $v ]] && echo "Checking svn dir for jars with version: $svnver"
+
+    for fr in $(find $1 -type d -name target); do
+
+        for svnjar in $fr/*"${svnver}.jar"; do
+            if [[ -f $svnjar ]]; then
+                
+                svnjar=$(readlink -f $svnjar)
+                [[ -n $V ]] && echo "Found jar: $svnjar"
+                svnjars="$svnjars $svnjar"
+            fi
+        done
+
+    done
+    
+    echo "svnjars:${svnjars}" >> $cachefile
+fi
+
+IFS=$IFSBAK
+
+for svnjar in $svnjars; do
+    svnjarname=$(basename $svnjar)
+    svnjnv=${svnjarname%$svnver.jar}
+    
+    [[ -n $V ]] && echo "Jar name without version: $svnjnv"
+    
+    for sdkjar in $sdkjars; do
+        
+        sdkdir=$(dirname $sdkjar)
+        sdkfl=$(basename $sdkjar)
+        rel=${sdkjar#$1}
+        dest="$sdkdir"
+        sdkjnv=${sdkfl%$sdkver.jar}
+        [[ -n $V ]] && echo "SDK jar name without version: $sdkjnv"
+
+        if [[ "${svnjnv}" == "${sdkjnv}" ]]; then
+            [[ -n $v ]] && echo "Copying $svnjar to $dest"
+            
+            if [[ ! -f "${sdkjar}.bak" ]]; then
+                [[ -n $v ]] && echo "Backing up ${sdkjar} to ${sdkjar}.bak"
+                mv "${sdkjar}" "${sdkjar}.bak"
+            fi
+            cp "$svnjar" "$sdkjar"
+        fi
+    done
+done
+
+            
+# ## LAST TESTED POINT
+# [[ -n $v ]] && echo "$sdkjars"
+# exit
