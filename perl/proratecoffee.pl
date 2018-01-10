@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-use Time::Piece;
 use DateTime qw( );
 use feature qw(say);
 
@@ -41,9 +40,6 @@ close $in;
 
 say "First date: ".$firstdt->ymd();
 my $lastdt = $firstdt->clone();
-# my $lastm = $lastdt->month() + 7;
-# $lastdt->set_month(($lastm - 1)%12 + 1);
-# $lastdt->set_year(int(($lastm - 1)/12));
 $lastdt->add(DateTime::Duration->new(months => 7));
 say "Last date: ".$lastdt->ymd();
 
