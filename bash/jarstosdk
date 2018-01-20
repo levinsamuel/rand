@@ -71,6 +71,7 @@ fi
 if [[ -z $sdk || ! -d $sdk || -z $sdkver || -z $sdkjars || -z $svnjars ]]; then
     
     
+    
     [[ -n $v ]] && echo "Cache dir is missing information, or SDK path has changed. Rediscovering paths."
     [[ -f $cachefile ]] && rm "$cachefile" && touch "$cachefile"
     ngbase="/cygdrive/c/nextgate"
@@ -122,6 +123,7 @@ if [[ -z $sdk || ! -d $sdk || -z $sdkver || -z $sdkjars || -z $svnjars ]]; then
 
     [[ -n $v ]] && echo "Checking svn dir for jars with version: $svnver"
 
+    svnjars=
     for fr in $(find $1 -type d -name target); do
 
         for svnjar in $fr/*"${svnver}.jar"; do
