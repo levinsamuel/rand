@@ -1,0 +1,14 @@
+{
+  "name": "my-weather-pwapp",
+  "version": "1.0.0",
+  "description": "My sample webapp from here: https://developers.google.com/web/fundamentals/codelabs/your-first-pwapp/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sam Levin",
+  "license": "ISC",
+  "dependencies": {
+    "idb": "^2.1.3"
+  }
+}
