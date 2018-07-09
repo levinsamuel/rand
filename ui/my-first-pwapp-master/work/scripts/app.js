@@ -16,6 +16,8 @@
 (function() {
   'use strict';
 
+  //var localforage = require('localforage');
+
   var app = {
     isLoading: true,
     visibleCards: {},
@@ -207,7 +209,7 @@
   // TODO add saveSelectedCities function here
   app.saveSelectedCities = function() {
     var selectedCities = JSON.stringify(app.selectedCities);
-    localStorage.selectedCities = selectedCities;
+    localforage.selectedCities = selectedCities;
   };
 
 
@@ -331,7 +333,7 @@
    *   SimpleDB (https://gist.github.com/inexorabletash/c8069c042b734519680c)
    ************************************************************************/
 
-  app.selectedCities = localStorage.selectedCities;
+  app.selectedCities = localforage.selectedCities;
   if (app.selectedCities) {
     app.selectedCities = JSON.parse(app.selectedCities);
     app.selectedCities.forEach(function(city) {
