@@ -210,12 +210,15 @@
   app.saveSelectedCities = function() {
     var selectedCities = JSON.stringify(app.selectedCities);
 
-    localforage.setItem('selectedCities', selectedCities, function(err, value) {
+    setItem('selectedCities', selectedCities);
+  };
+
+  function setItem(k, v) {
+    localforage.setItem(k, v, function(err, value) {
       console.log('set item error? ' + err);
       console.log('set item value ' + value);
     });
   };
-
 
   app.getIconClass = function(weatherCode) {
     // Weather codes: https://developer.yahoo.com/weather/documentation.html#codes
@@ -363,4 +366,12 @@
 
 
   // TODO add service worker code here
+
+  if ('serviceWorker' in navigator) {
+     navigator.serviceWorker
+              .register('./service-worker.js')
+              .then(function() { console.log('Service Worker Registered'); });
+   }
+
+
 })();
