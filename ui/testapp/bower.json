@@ -1,5 +1,5 @@
 {
-  "name": "my-test-app",
+  "name": "testapp",
   "version": "0.0.0",
   "dependencies": {
     "angular": "^1.4.0",
@@ -24,5 +24,19 @@
         "dist/js/bootstrap.js"
       ]
     }
-  }
+  },
+  "homepage": "https://github.com/levinsamuel/rand",
+  "authors": [
+    "Samuel Levin <levinsamuel000@gmail.com>"
+  ],
+  "description": "A sample angular project from somewhere",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
 }
