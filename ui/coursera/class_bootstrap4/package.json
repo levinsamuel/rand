@@ -1,0 +1,22 @@
+{
+  "name": "class_bootstrap4",
+  "version": "1.0.0",
+  "description": "Packages used for the bootstrap 4 coursera class",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/levinsamuel/rand.git"
+  },
+  "author": "SammyBoy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/levinsamuel/rand/issues"
+  },
+  "homepage": "https://github.com/levinsamuel/rand#readme",
+  "devDependencies": {
+    "lite-server": "^2.4.0"
+  }
+}
