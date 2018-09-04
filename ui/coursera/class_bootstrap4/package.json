@@ -1,24 +1,16 @@
 {
-  "name": "class_bootstrap4",
+  "name": "confusion",
   "version": "1.0.0",
-  "description": "Packages used for the bootstrap 4 coursera class",
-  "main": "index.js",
+  "description": "This is a website for Ristorante Con Fusion",
+  "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run lite",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "lite": "lite-server"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/levinsamuel/rand.git"
-  },
-  "author": "SammyBoy",
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/levinsamuel/rand/issues"
-  },
-  "homepage": "https://github.com/levinsamuel/rand#readme",
-  "devDependencies": {
-    "lite-server": "^2.4.0"
+    "devDependencies": {
+    "lite-server": "^2.3.0"
   }
 }
