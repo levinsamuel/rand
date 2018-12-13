@@ -3,7 +3,7 @@
 IFSBAK=$IFS
 IFS=$'\n'
 
-me=$(readlink -f $0 | xargs dirname)
+me=$(readlink $0 | xargs dirname)
 
 i=0
 for url in $(cat $me/../other/rudies2.txt); do
