@@ -61,13 +61,17 @@ print(unsorted_search(la, 50))
 print("max level:", level)
 times.append(time.time())
 
-print('Linear recursive search:')
-print(recSearch(la, 50))
+print('\nLinear recursive search:')
+try:
+    print(recSearch(la, 50))
+except RecursionError:
+    print('Execution failed with recursion error')
 print("max level:", level)
 times.append(time.time())
 
 # construct times
 df = pd.DataFrame({'starts': times[0:2], 'ends': times[1:3]})
 df['diffs'] = df['ends'] - df['starts']
+print('\nExecution times')
 print(df)
 
