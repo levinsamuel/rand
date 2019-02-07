@@ -54,10 +54,10 @@ def read(id=None):
     cl = client()
     if id is not None:
         dbo = cl.query(DBPerson).filter_by(_id=id).first()
-        ppl = dbo.to_person()
+        ppl = dbo.to_person() if dbo is not None else None
         log.debug('person: %s', ppl)
     else:
-        pass
+        ppl = [p.to_person() for p in cl.query(DBPerson)]
     return ppl
 
     # return [PEOPLE[key] for key in sorted(PEOPLE.keys())]
