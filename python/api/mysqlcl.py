@@ -27,6 +27,11 @@ class DBPerson(Base):
     
     def __init__(self, person):
         self.fname, self.lname, self.createtime = person.fname, person.lname, person.timestamp
+        
+    def to_person(self):
+        return Person({'fname': self.fname,
+                       'lname': self.lname,
+                       'timestamp': self.createtime})
 
 def client():
     return Session()
@@ -48,7 +53,9 @@ def read(id=None):
 
     cl = client()
     if id is not None:
-        ppl = cl.query(DBPerson).filter_by(_id=id).first()
+        dbo = cl.query(DBPerson).filter_by(_id=id).first()
+        ppl = dbo.to_person()
+        log.debug('person: %s', ppl)
     else:
         pass
     return ppl

@@ -14,8 +14,13 @@ class Person:
     def __init__(self, pdct):
         self.fname = pdct['fname']
         self.lname = pdct['lname']
-        self.timestamp = pdct['timestamp']\
-            if 'timestamp' in pdct else _get_timestamp()
+        if 'timestamp' in pdct:
+            ts = pdct['timestamp']
+            if isinstance(ts, datetime):
+                ts = datetime_std_format(ts)
+            self.timestamp = ts
+        else:
+            self.timestamp = _get_timestamp()
 
     def __repr__(self):
         return '{} {}'.format(self.fname, self.lname)
@@ -29,9 +34,13 @@ class Person:
 
 
 def _get_timestamp():
-    return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
+    return datetime_std_format(datetime.now())
+    
+    
+def datetime_std_format(dt):
+    return dt.strftime(("%Y-%m-%d %H:%M:%S"))
 
-
+        
 def unmarshal(pstr):
 
     pdct = json.loads(pstr)

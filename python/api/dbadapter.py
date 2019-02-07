@@ -11,8 +11,8 @@ log = logging.getLogger('dbadapter')
 log.setLevel(logging.DEBUG)
 
 
-# client = mongocl
-client = mysqlcl
+client = mongocl
+# client = mysqlcl
 
 
 def read(id=None):
