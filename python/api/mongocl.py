@@ -7,7 +7,7 @@ import json
 from people import Person
 
 logging.basicConfig()
-log = logging.getLogger('peopleapi')
+log = logging.getLogger('mongocl')
 log.setLevel(logging.DEBUG)
 
 
