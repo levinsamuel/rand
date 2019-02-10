@@ -11,6 +11,6 @@ package sam.lcss.random;
  */
 public class Me {
     
-    private final String name;
+    private  String name;
     
 }
