@@ -34,7 +34,15 @@ class Second(First):
     def print_super(self):
         return '\nwho am i: {}\nsuper type: {}\nparent type: {}\n'\
             .format(
-                self.whoami(), super().whoami(),
+                # a demonstration of an interesting concept
+                # First always returns the self's own type.
+                # 'Second' or 'Third'
+                self.whoami(),
+                # This always returns the super of wherever it is *declared*
+                # meaning always 'First' since declared in 'Second'
+                super().whoami(),
+                # This is more like the self-relative super, since it is
+                # the super of whatever 'self' is, and self's type remains
                 super(type(self), self).whoami()
             )
 
@@ -52,7 +60,8 @@ class A:
 
     def __init__(self, letter, **kwargs):
         self.letter = letter
-        log.debug('init A: %s', kwargs)
+        log.debug('init A: my type: %s, remaining args: %s',
+                  type(self), kwargs)
         super().__init__(**kwargs)
 
     def whoami(self):
@@ -61,14 +70,12 @@ class A:
 
 class B(A, Third):
 
-    def __init__(self, letter, **kwargs):
-        kwargs['value'] = letter
+    def __init__(self, letter):
+        kwargs = {'value': letter}
         super().__init__(letter, **kwargs)
 
 
 class C(Third, A):
 
-    def __init__(self, letter, **kwargs):
-        kwargs['value'] = letter
-        kwargs['letter'] = letter
-        super().__init__(**kwargs)
+    def __init__(self, letter):
+        super().__init__(value=letter, letter=letter)
