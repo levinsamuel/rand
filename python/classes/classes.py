@@ -1,10 +1,18 @@
 import logging
+import abc
 
 logging.basicConfig()
 log = logging.getLogger('classes')
 
 
-class First:
+class Who(abc.ABC):
+
+    @abc.abstractmethod
+    def whoami(self):
+        pass
+
+
+class First(Who):
 
     def __init__(self, value, **kwargs):
         self.value = value
@@ -67,6 +75,16 @@ class A:
     def whoami(self):
         return 'A'
 
+    def print_super_chain(self):
+        pref, me, chain = '', self, ''
+        for cls in type(self).mro():
+            log.debug('current type of "me": %s', dir(me))
+            iam = me.whoami() if hasattr(me, 'whoami') else 'no one'
+            chain += f'{pref}{iam}\n'
+            pref += ' '
+            me = super(cls, self)
+        return chain
+
 
 class B(A, Third):
 
@@ -79,3 +97,6 @@ class C(Third, A):
 
     def __init__(self, letter):
         super().__init__(value=letter, letter=letter)
+
+    def whoami(self):
+        return 'C'
