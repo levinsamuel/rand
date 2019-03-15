@@ -1,7 +1,8 @@
 import unittest
 import logging
-from classes import First, Second, Third, B, C, log as cllog
-from decorators import deflog, log as dlog, DecTest, decorated
+from .classes import First, Second, Third, B, C, log as cllog
+from .decorators import deflog, log as dlog, DecTest, decorated
+
 
 logging.basicConfig()
 log = logging.getLogger('classestest')
@@ -43,7 +44,7 @@ class ClassesTest(unittest.TestCase):
 
     def test_multiple_super(self):
 
-        log.setLevel(logging.DEBUG)
+        # log.setLevel(logging.DEBUG)
         # cllog.setLevel(logging.DEBUG)
         c = C(1)
         log.debug('c: %s', c)
@@ -72,5 +73,5 @@ class DecoratorsTest(unittest.TestCase):
 
         log.debug('decorated before: %s', decorated)
         self.assertIn('hi', decorated)
-        dt = DecTest()
+        DecTest()
         log.debug('decorated after: %s', decorated)
