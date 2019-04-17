@@ -1,1 +1,14 @@
 Some scripts I've found, wrote, or modified for using git in a bash shell.
+
+./git here is a kind of wrapper around git. What I do is put it in my HOME
+directory and then put my HOME dir in my path ahead of everything else.
+That way things in home are found first. This script will then scan your
+PATH to find the next executable called "git" and use that to run commands
+that are not custom commands.
+
+custom commands are placed in $HOME/.mygit. This works with the modified
+.git-completion.bash also in this directory.
+
+TODO: make that path more easily configurable.
+
+

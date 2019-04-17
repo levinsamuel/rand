@@ -1,0 +1,44 @@
+#!/bin/bash
+
+mycommands="${HOME}/.mygit"
+
+gits=(`type -a git`)
+# output of this is "git is [location]"
+# so every third value is a path
+oggit=${gits[5]}
+# echo "og git: ${oggit}"
+
+args="$@"
+cmd=
+i=0
+for arg in "${@}"; do
+    # echo $arg
+    i=$((i+1))
+    if [[ -z "$cmd" && "$arg" != -* ]]; then
+        c=$i
+        cmd="$arg"
+    fi
+    if [[ "$arg" == --help ]]; then
+        help=1
+    fi
+done
+if [[ -z "$@" ]]; then
+    help=1
+fi
+# echo "help"
+# echo "command: $cmd"
+if [[ -n "$help" ]]; then
+    echo "Available custom commmands: $(ls $mycommands)"
+    echo
+fi
+# echo "$@"
+
+cpath="$mycommands/$cmd"
+if [[ -n "$cmd" && -f "$cpath" ]]; then
+   shift $c
+   # echo "found command $cpath"
+   $cpath "${@}"
+else
+   # echo "command not found: $cpath"
+   $oggit "${@}"
+fi
