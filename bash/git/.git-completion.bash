@@ -2927,7 +2927,9 @@ __git_main ()
 			then
 				__gitcomp "$GIT_TESTING_PORCELAIN_COMMAND_LIST"
 			else
-				__gitcomp "$(git --list-cmds=list-mainporcelain,others,nohelpers,alias,list-complete,config)"
+				cmds="$(git --list-cmds=list-mainporcelain,others,nohelpers,alias,list-complete,config)"
+				customcmds="$(ls ~/.mygit)"
+				__gitcomp "$cmds $customcmds"
 			fi
 			;;
 		esac
