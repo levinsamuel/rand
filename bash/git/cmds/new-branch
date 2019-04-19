@@ -1,0 +1,11 @@
+#!/bin/bash
+
+[[ -z $1 ]] && echo "Error: branch name required" >&2 && exit 1
+from=${2:-valuations-develop}
+
+newb="$1"
+git branch "$newb" "$from" && \
+git checkout "$newb" && \
+git push --set-upstream origin "$newb" && \
+git remote set-branches --add origin "$newb"
+

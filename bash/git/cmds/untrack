@@ -1,0 +1,4 @@
+brnch=$1
+[[ -z $brnch ]] && echo "branch name required" >&2 && exit 1
+git config --unset remote.origin.fetch ".*refs/remotes/origin/${brnch}"
+
