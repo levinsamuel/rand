@@ -28,7 +28,7 @@ fi
 # echo "help"
 # echo "command: $cmd"
 if [[ -n "$help" ]]; then
-    echo "Available custom commmands: $(ls $mycommands)"
+    echo "Available custom commmands: $(ls $mycommands|tr '\n' ' ')"
     echo
 fi
 # echo "$@"
