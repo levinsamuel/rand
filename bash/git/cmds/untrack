@@ -1,5 +1,6 @@
-brnch=$1
-[[ -z $brnch ]] && echo "branch name required" >&2 && exit 1
+brnchs=$@
+[[ -z $brnchs ]] && echo "branch name required" >&2 && exit 1
 git remote prune origin
-git config --unset remote.origin.fetch ".*refs/remotes/origin/${brnch}"
-
+for brnch in $brnchs; do
+    git config --unset remote.origin.fetch ".*refs/remotes/origin/${brnch}"
+done
