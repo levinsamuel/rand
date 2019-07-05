@@ -3,4 +3,5 @@ brnchs=$@
 git remote prune origin
 for brnch in $brnchs; do
     git config --unset remote.origin.fetch ".*refs/remotes/origin/${brnch}"
+    git branch -D "${brnch}"
 done

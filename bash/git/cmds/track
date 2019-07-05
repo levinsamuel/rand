@@ -1,0 +1,9 @@
+brnchs=$@
+[[ -z $brnchs ]] && echo "branch name required" >&2 && exit 1
+for brnch in $brnchs; do
+    git remote set-branches --add origin "$brnch"
+done
+git fetch
+for brnch in $brnchs; do
+    git checkout "$brnch"
+done
