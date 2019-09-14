@@ -3,7 +3,11 @@
 IFSBAK=$IFS
 IFS=$'\n'
 
-me=$(readlink $0 | xargs dirname)
+link=$(readlink $0)
+if [[ -z $link ]]; then
+    link=$0
+fi
+me=$(dirname $link)
 
 i=0
 for url in $(cat $me/../other/rudies2.txt); do
@@ -15,4 +19,6 @@ done
 num=${#urls}
 ind=$(($RANDOM % num))
 
-chrome chrome:\\newtab ${urls[$ind]}
+# this \\newtab thing doesn't seem to work on macs
+# chrome:\\newtab 
+chrome ${urls[$ind]}
