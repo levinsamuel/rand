@@ -1,0 +1,36 @@
+while getopts "h" opt; do
+	case $opt in
+		h) echo "Usage: git compare [branch] [compare to branch]"
+		echo '[branch] defaults to current branch. [compare to branch] defaults to "master"'
+		exit 0
+		;;
+	esac
+done
+
+shift $((OPTIND - 1))
+
+function get_branch {
+	current_branch="$(git symbolic-ref HEAD 2>/dev/null)" ||
+	current_branch="(unnamed branch)"     # detached HEAD
+
+	current_branch=${current_branch##refs/heads/}
+	export current_branch
+}
+
+# Get current branch, or branch option
+get_branch
+branch=${1:-$current_branch}
+[[ -z $branch ]] && echo "no branch to compare" >&2 && exit 1
+
+# Get push repo
+remote_arr=($(git remote -v |grep '(push)'))
+remote_url=${remote_arr[1]}
+# Parse remote URL for repo
+repo=${remote_url#*:}
+repo=${repo%.git}
+
+# Compare branch
+compare_branch=${2:-master}
+
+url="https://github.com/${repo}/compare/${compare_branch}...${branch}"
+open $url
