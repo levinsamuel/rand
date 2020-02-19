@@ -1371,6 +1371,11 @@ _git_track ()
 	_git_checkout "$@"
 }
 
+_git_compare ()
+{
+	_git_checkout "$@"
+}
+
 __git_cherry_pick_inprogress_options="--continue --quit --abort"
 
 _git_cherry_pick ()

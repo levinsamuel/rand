@@ -8,7 +8,11 @@ git checkout "$from" && \
 git pull && \
 git branch "$newb" "$from" && \
 git checkout "$newb" && \
-git push --set-upstream origin "$newb" && \
-git remote set-branches --add origin "$newb" && \
+git push --set-upstream origin "$newb"
+(( $? > 0 )) && exit 1
+alreadyadded=$(git config -l|grep "remote\.origin\.fetch=.*\/${newb}\$")
+if [[ -z $alreadyadded ]]; then
+  git remote set-branches --add origin "$newb"
+fi
 git pull
 
