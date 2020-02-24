@@ -1,7 +1,10 @@
 brnchs=$@
 [[ -z $brnchs ]] && echo "branch name required" >&2 && exit 1
 for brnch in $brnchs; do
-    git remote set-branches --add origin "$brnch"
+    alreadyadded=$(git config -l|grep "remote\.origin\.fetch=.*\/${brnch}\$")
+    if [[ -z $alreadyadded ]]; then
+        git remote set-branches --add origin "$brnch"
+    fi
 done
 git fetch
 for brnch in $brnchs; do
