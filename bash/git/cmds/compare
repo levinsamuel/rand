@@ -25,7 +25,8 @@ repo=${remote_url#*:}
 repo=${repo%.git}
 
 # Compare branch
-compare_branch=${1:-master}
+defbranch=${NEW_BRANCH_BASE:-master}
+compare_branch=${1:-$defbranch}
 
 # Get current branch, or branch option
 get_branch

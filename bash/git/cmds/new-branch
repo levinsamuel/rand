@@ -1,7 +1,9 @@
 #!/bin/bash
 
 [[ -z $1 ]] && echo "Error: branch name required" >&2 && exit 1
-from=${2:-master}
+# If new branch base not set, assume master
+default_branch=${NEW_BRANCH_BASE:-master}
+from=${2:-$default_branch}
 
 newb="$1"
 git checkout "$from" && \
