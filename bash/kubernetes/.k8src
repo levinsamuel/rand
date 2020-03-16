@@ -1,0 +1,97 @@
+
+function _parse_args {
+  ns=
+  OPTIND=1
+  while getopts "n:" opt; do
+    case ${opt} in
+      n) ns=$OPTARG
+      ;;
+    esac
+  done
+  to_shift=$((OPTIND - 1))
+}
+
+function _set_namespace_arg {
+  ns_arg=
+  if [[ -n $ns ]]; then
+    ns_arg="-n $ns"
+  fi
+}
+
+function _get_pod_for_release {
+  group=$1
+  _set_namespace_arg
+  local podname=$(kubectl $ns_arg get po | grep -E "$group\-carta\-web\-[0-9a-f]+" | cut -d" " -f1)
+  [[ -z $podname ]] && echo "No deployment found matching group: ${group}" >&2 && return 1
+  echo $podname
+}
+
+function kexec {
+  _parse_args $@
+  shift $to_shift
+  group=$1
+  shift
+  _set_namespace_arg
+  local podname=$(_get_pod_for_release $group $ns)
+  kubectl $ns_arg exec -it $podname -c carta-web -- $@
+}
+
+function kupd8 {
+  _parse_args $@
+  shift $to_shift
+  _set_namespace_arg
+  for group in $@; do
+    kubectl $ns_arg get po|grep -E "$group\-(carta\-web|celery\-worker)\-" | cut -f1 -d' '|xargs kubectl $ns_arg delete po
+  done
+}
+
+function kshell {
+    kexec "$@" /bin/bash
+}
+
+function klog {
+  _parse_args $@
+  shift $to_shift
+  _set_namespace_arg
+
+  group=$1
+  shift
+  kubectl $ns_arg logs -f "deployment/${group}-carta-web" carta-web
+}
+
+function klist {
+  IFSBAK=$IFS
+  IFS=$'\n'
+  _parse_args $@
+  shift $to_shift
+  _set_namespace_arg
+  tab=$'\t'
+  nl=$'\n'
+  cmd="kubectl $ns_arg get deployments"
+  deploys=$(eval $cmd|grep '\-carta\-web'|cut -f 1 -d ' ')
+  output=
+  for d in $deploys; do
+    cmd="kubectl $ns_arg describe deployments/$d"
+    info=($(eval $cmd | grep 'Image.*carta\-web\|CreationTimestamp'))
+    image=${info[1]}
+    create=${info[0]#CreationTimestamp: }
+    deploy=${d%\-carta\-web}
+    image=${image#*esharesinc/carta\-web_test\:}
+    output="$output$nl$deploy${tab}$image${tab}$create"
+  done
+  if [[ -n $output ]]; then
+    echo -n "Deployment${tab}Image${tab}Created"
+    echo "$output"
+  fi
+  
+  IFS=$IFSBAK
+}
+
+function ktest {
+  _parse_args $@
+  shift $to_shift
+  _set_namespace_arg
+  echo "namespace $ns"
+  echo "group: $1"
+  echo "ns arg: $ns_arg"
+}
