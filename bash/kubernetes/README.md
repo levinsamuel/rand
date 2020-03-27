@@ -3,7 +3,7 @@
 1. Check out this repo
 
 ```
-git clone 
+git clone git@github.com:levinsamuel/rand.git
 ```
 
 2. Link this file to your home directory
