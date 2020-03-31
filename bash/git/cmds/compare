@@ -1,8 +1,12 @@
 while getopts "h" opt; do
   case $opt in
     h) echo "Usage: git compare [branch] [compare to branch]"
+      echo
       echo '[branch] defaults to current branch. [compare to branch] defaults to'
       echo 'the value of NEW_BASE_BRANCH env variable or "master".'
+      echo
+      echo 'The form of NEW_BASE_BRANCH is "repo:branch[,repo:branch,...]"'
+      echo 'as many times as you need.'
       exit 0
     ;;
   esac
