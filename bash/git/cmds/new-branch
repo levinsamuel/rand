@@ -1,8 +1,12 @@
 #!/bin/bash
 
+mydir=$(dirname $0)
+. "$mydir/_functions"
+
+
 [[ -z $1 ]] && echo "Error: branch name required" >&2 && exit 1
 # If new branch base not set, assume master
-default_branch=${NEW_BRANCH_BASE:-master}
+default_branch=$(get_default_base_branch $(_get_repo))
 from=${2:-$default_branch}
 
 newb="$1"

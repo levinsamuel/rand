@@ -1,3 +1,6 @@
+mydir=$(dirname $0)
+. "$mydir/_functions"
+
 while getopts "h" opt; do
   case $opt in
     h) echo "Usage: git compare [branch] [compare to branch]"
@@ -14,46 +17,15 @@ done
 
 shift $((OPTIND - 1))
 
-function get_current_branch {
-  current_branch="$(git symbolic-ref HEAD 2>/dev/null)" ||
-  current_branch="(unnamed branch)"     # detached HEAD
 
-  current_branch=${current_branch##refs/heads/}
-  export current_branch
-}
-
-function get_default_base_branch {
-  # repo
-  local r=$1
-  if [[ -z $NEW_BRANCH_BASE ]]; then
-    defbranch='master'
-    return
-  fi
-  local IFSBAK=$IFS
-  IFS=','
-  for line in $NEW_BRANCH_BASE; do
-    local rb=${line%:*}
-    if [[ "$r" == */$rb ]]; then
-      defbranch=${line#*:}
-    fi
-  done
-  defbranch=${defbranch:-master}
-}
-
-# Get push repo
-remote_arr=($(git remote -v |grep '(push)'))
-remote_url=${remote_arr[1]}
-# Parse remote URL for repo
-repo=${remote_url#*:}
-repo=${repo%.git}
+repo=$(_get_repo)
 
 # Compare branch
-get_default_base_branch $repo
+defbranch=$(get_default_base_branch $repo)
 compare_branch=${1:-$defbranch}
 
 # Get current branch, or branch option
-get_current_branch
-branch=${2:-$current_branch}
+branch=${2:-$(_get_current_branch)}
 [[ -z $branch ]] && echo "no branch to compare" >&2 && exit 1
 
 url="https://github.com/${repo}/compare/${compare_branch}...${branch}"
