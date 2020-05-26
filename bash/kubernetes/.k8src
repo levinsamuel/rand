@@ -17,7 +17,7 @@ function _parse_args {
 function _set_namespace_arg {
   ns_arg=
   if [[ -n $ns ]]; then
-    ns_arg="-n $ns"
+    ns_arg="-n${ns}"
   fi
 }
 
@@ -74,6 +74,8 @@ function kls {
   deploys=$(eval $cmd|grep '\-carta\-web'|cut -f 1 -d ' ')
   dlist=
   for d in $deploys; do dlist="$dlist deployments/$d"; done
+  [[ -z $dlist ]] && return
+
   cmd="kubectl $ns_arg describe $dlist"
   info=($(eval $cmd | grep '^Name:\|Image.*carta\-web\|CreationTimestamp'))
   IFS=$IFSBAK
@@ -89,7 +91,6 @@ function kls {
       create=${line#CreationTimestamp: }
     fi
     if [[ "$line" == *Image:* && -n $image ]]; then
-      echo "making output, image: $image"
       output="$output$nl$name${tab}$image${tab}$create"
       image=
     elif [[ "$line" == *Image:* && -z $image ]]; then
@@ -101,6 +102,15 @@ function kls {
     echo "$output"
   fi
   
+}
+
+function update_test_boxes {
+  
+  releases=$(kls -n valuations-pg | cut -f 1| grep -v Deployment)
+  for box in $releases; do
+    echo "updating $box"
+    kupd8 -n valuations-pg $box
+  done
 }
 
 function ktest {
