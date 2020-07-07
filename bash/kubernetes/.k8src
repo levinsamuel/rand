@@ -2,13 +2,16 @@
 function _parse_args {
   ns=
   OPTIND=1
-  while getopts "n:fi" opt; do
+  while getopts "n:fiv" opt; do
     case ${opt} in
       n) ns=$OPTARG
       ;;
       f) f_opt="-f"
       ;;
       i) it_opt="-it"
+      ;;
+      v) ns=valuations-pg
+      ;;
     esac
   done
   to_shift=$((OPTIND - 1))
@@ -71,7 +74,7 @@ function kls {
   tab=$'\t'
   nl=$'\n'
   cmd="kubectl $ns_arg get deployments"
-  deploys=$(eval $cmd|grep '\-carta\-web'|cut -f 1 -d ' ')
+  deploys=$(eval $cmd|grep '\-carta\-web[^-]'|cut -f 1 -d ' ')
   dlist=
   for d in $deploys; do dlist="$dlist deployments/$d"; done
   [[ -z $dlist ]] && return
@@ -86,15 +89,14 @@ function kls {
     if [[ "$line" == Name:* ]]; then
       name=$(echo $line|sed 's/Name:[[:space:]]*//g')
       name=${name%\-carta\-web}
+      image=
     fi
     if [[ "$line" == Creation* ]]; then
       create=${line#CreationTimestamp: }
     fi
-    if [[ "$line" == *Image:* && -n $image ]]; then
-      output="$output$nl$name${tab}$image${tab}$create"
-      image=
-    elif [[ "$line" == *Image:* && -z $image ]]; then
+    if [[ "$line" == *Image:* && -z $image ]]; then
       image=${line#*esharesinc/carta\-web_test\:}
+      output="$output$nl$name${tab}$image${tab}$create"
     fi
   done
   if [[ -n $output ]]; then
@@ -102,6 +104,17 @@ function kls {
     echo "$output"
   fi
   
+}
+
+function gist_test_boxes {
+  
+  set -o errexit
+  set -o pipefail
+  releases=$(kls -n valuations-pg | cut -f 1| grep -v Deployment)
+  for box in $releases; do
+    echo "updating $box"
+    kexec -n valuations-pg $box ./manage.py run_script $@
+  done
 }
 
 function update_test_boxes {
