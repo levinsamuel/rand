@@ -108,7 +108,6 @@ function kls {
 
 function gist_test_boxes {
   
-  set -o errexit
   set -o pipefail
   releases=$(kls -n valuations-pg | cut -f 1| grep -v Deployment)
   for box in $releases; do
