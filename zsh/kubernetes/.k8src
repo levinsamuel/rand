@@ -74,13 +74,10 @@ function kls {
   tab=$'\t'
   nl=$'\n'
   cmd="kubectl $ns_arg get deployments"
-  deploys=$(eval $cmd|grep '\-carta\-web[^-]'|cut -f 1 -d ' ')
-  dlist=
-  for d in $deploys; do dlist="$dlist deployments/$d"; done
+  dlist=($(eval $cmd|grep '\-carta\-web[^-]'|cut -f 1 -d ' '|sed 's#^#deployments/#'))
   [[ -z $dlist ]] && return
 
-  cmd="kubectl $ns_arg describe $dlist"
-  info=($(eval $cmd | grep '^Name:\|Image.*carta\-web\|CreationTimestamp'))
+  info=($(kubectl $ns_arg describe "${dlist[@]}" | grep '^Name:\|Image.*carta\-web\|CreationTimestamp'))
   IFS=$IFSBAK
   len=${#info[@]}
   output=
@@ -133,3 +130,4 @@ function ktest {
   echo "group: $1"
   echo "ns arg: $ns_arg"
 }
+
