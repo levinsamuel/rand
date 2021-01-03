@@ -1,14 +1,24 @@
 #!/bin/bash
 
+mydir=$(dirname $0)
+. "$mydir/_functions"
+
+
 [[ -z $1 ]] && echo "Error: branch name required" >&2 && exit 1
-from=${2:-master}
+# If new branch base not set, assume master
+default_branch=$(get_default_base_branch $(_get_repo))
+from=${2:-$default_branch}
 
 newb="$1"
 git checkout "$from" && \
 git pull && \
 git branch "$newb" "$from" && \
 git checkout "$newb" && \
-git push --set-upstream origin "$newb" && \
-git remote set-branches --add origin "$newb" && \
+git push --set-upstream origin "$newb"
+(( $? > 0 )) && exit 1
+alreadyadded=$(git config -l|grep "remote\.origin\.fetch=.*\/${newb}\$")
+if [[ -z $alreadyadded ]]; then
+  git remote set-branches --add origin "$newb"
+fi
 git pull
 
