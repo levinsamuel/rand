@@ -24,7 +24,7 @@ function get_default_base_branch {
   local r=$1
   local defbranch
   if [[ -z $NEW_BRANCH_BASE ]]; then
-    defbranch='master'
+    echo -n master
     return
   fi
   local IFSBAK=$IFS

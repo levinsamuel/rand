@@ -21,4 +21,4 @@ ind=$(($RANDOM % num))
 
 # this \\newtab thing doesn't seem to work on macs
 # chrome:\\newtab 
-chrome ${urls[$ind]}
+open ${urls[$ind]}
