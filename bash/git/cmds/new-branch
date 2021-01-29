@@ -3,10 +3,11 @@
 mydir=$(dirname $0)
 . "$mydir/_functions"
 
+my_repo=$(_get_repo)
 
 [[ -z $1 ]] && echo "Error: branch name required" >&2 && exit 1
 # If new branch base not set, assume master
-default_branch=$(get_default_base_branch $(_get_repo))
+default_branch=$(get_default_base_branch "$my_repo")
 from=${2:-$default_branch}
 
 newb="$1"
@@ -16,8 +17,9 @@ git branch "$newb" "$from" && \
 git checkout "$newb" && \
 git push --set-upstream origin "$newb"
 (( $? > 0 )) && exit 1
+
 alreadyadded=$(git config -l|grep "remote\.origin\.fetch=.*\/${newb}\$")
-if [[ -z $alreadyadded ]]; then
+if [[ -z $alreadyadded && -n $(is_track_repo $my_repo) ]]; then
   git remote set-branches --add origin "$newb"
 fi
 git pull

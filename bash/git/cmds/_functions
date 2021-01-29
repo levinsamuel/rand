@@ -40,3 +40,11 @@ function get_default_base_branch {
   echo -n $defbranch
 }
 
+function is_track_repo {
+  local IFS=','
+  for repo in $ADD_TO_FETCH_REPOS; do
+    if [[ "$repo" == "$1" ]]; then
+      echo -n "$repo,"
+    fi
+  done
+}
